@@ -1,0 +1,446 @@
+{
+  "name": "Test extract pdf image",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            },
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {
+          "labelIds": [
+            "INBOX"
+          ]
+        },
+        "options": {
+          "downloadAttachments": true
+        }
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "0c936f26-f29b-44d7-a883-ef3fb437274e",
+      "name": "Recibir mail test",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "uGxkI96sNtORotIV",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Actúa como un analista de datos experto. Te voy a pasar el texto extraído de una factura de servicios públicos (vía PDF o OCR de imagen).\n\nTu objetivo es analizar el texto, corregir posibles errores de lectura si provienen de un OCR (por ejemplo, interpretar 'Ede5ur' como 'Edesur') y devolver únicamente un objeto JSON con los siguientes campos:\n\ncliente: Nombre completo del titular de la factura.\n\nmonto: El valor de 'TOTAL A PAGAR (1º vencimiento)' como número (sin símbolos de moneda).\n\nnumero_factura: El identificador que aparece como 'LSP B...' o similar.\n\nrazon_social: El nombre de la empresa emisora del servicio.\n\nfecha: La fecha de emisión o la del 1º vencimiento en formato AAAA-MM-DD.\n\nTexto de la factura a procesar: {{ $json.text }}\n\nImportante: Responde exclusivamente con el objeto JSON, sin introducciones ni marcas de formato adicionales fuera del bloque de código.",
+        "options": {
+          "passthroughBinaryImages": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        608,
+        0
+      ],
+      "id": "2cb35799-ff1e-455a-a915-69aa29391448",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        608,
+        256
+      ],
+      "id": "c438f285-74c5-44ee-bdc8-4293eb739b1a",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "TeEfTVS7VvZ68YOO",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Este código limpia la respuesta de la IA para que Google Sheets la entienda\nconst response = items[0].json.output; // Ajusta 'output' según el nombre del campo de salida de tu AI Agent\n\n// Buscamos el contenido entre bloques de código ```json o simplemente el primer { y el último }\nconst jsonMatch = response.match(/\\{[\\s\\S]*\\}/);\n\nif (jsonMatch) {\n  try {\n    // Convertimos el texto encontrado en un objeto real de JavaScript\n    const cleanJson = JSON.parse(jsonMatch[0]);\n    return [{ json: cleanJson }];\n  } catch (e) {\n    throw new Error(\"No se pudo parsear el JSON de la IA: \" + e.message);\n  }\n} else {\n  throw new Error(\"La IA no devolvió un formato JSON válido.\");\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        928,
+        -16
+      ],
+      "id": "6c7b6cdf-0f0c-4003-a515-9be31e5e5dc6",
+      "name": "Limpia el JSON"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "15e5KPi1k15zRtouz6DEykVFZH819TIhAfAw-rFSDuCs",
+          "mode": "list",
+          "cachedResultName": "facturasTest",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/15e5KPi1k15zRtouz6DEykVFZH819TIhAfAw-rFSDuCs/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/15e5KPi1k15zRtouz6DEykVFZH819TIhAfAw-rFSDuCs/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "cliente": "={{ $json.cliente }}",
+            "monto": "={{ $json.monto }}",
+            "numero_factura": "={{ $json.numero_factura }}",
+            "razon_social": "={{ $json.razon_social }}",
+            "fecha": "={{ $json.fecha }}"
+          },
+          "matchingColumns": [
+            "numero_factura"
+          ],
+          "schema": [
+            {
+              "id": "cliente",
+              "displayName": "cliente",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "monto",
+              "displayName": "monto",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "numero_factura",
+              "displayName": "numero_factura",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "razon_social",
+              "displayName": "razon_social",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "fecha",
+              "displayName": "fecha",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1184,
+        -16
+      ],
+      "id": "f8e41ba8-2ac2-474f-8c78-2bd8c60e0139",
+      "name": "Registra la informacion",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "w9Mge788LQ6YzHC1",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "fileId": {
+          "__rl": true,
+          "value": "15e5KPi1k15zRtouz6DEykVFZH819TIhAfAw-rFSDuCs",
+          "mode": "list",
+          "cachedResultName": "FacturasTest",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/15e5KPi1k15zRtouz6DEykVFZH819TIhAfAw-rFSDuCs/edit?usp=drivesdk"
+        },
+        "newUpdatedFileName": "Facturas Cargadas",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        2096,
+        224
+      ],
+      "id": "80e66b4f-8740-4e26-9837-e10c3fe5366c",
+      "name": "Guardar cambios",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "DwATqTWu5qrFo0dH",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "reply",
+        "messageId": "={{ $('Recibir mail test').item.json.id }}",
+        "message": "=Hola, se han procesado e informado las facturas de: {{ $json.cliente }}.",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1568,
+        224
+      ],
+      "id": "fc4a43cb-910c-4b5a-818a-7ed57e1a7a52",
+      "name": "Respuesta:Facturas informadas",
+      "webhookId": "78fcba9b-56c7-4ea3-9d9e-e0dc2ce5e3b0",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "uGxkI96sNtORotIV",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldsToSummarize": {
+          "values": [
+            {
+              "aggregation": "concatenate",
+              "field": "cliente",
+              "includeEmpty": true,
+              "separateBy": ", "
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.summarize",
+      "typeVersion": 1.1,
+      "position": [
+        1360,
+        0
+      ],
+      "id": "7f8c2168-e130-4c27-852d-4a04cabde09c",
+      "name": "Summarize"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "$binary",
+        "include": "allOtherFields",
+        "options": {
+          "includeBinary": true
+        }
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "ac070370-3f4a-45b9-b1c0-404c89ea9cbd",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "6e9e0f83-52e9-4d02-b4cc-fa88feb01fd4",
+              "leftValue": "={{$binary.attachment_0.mimeType}}\n",
+              "rightValue": "=pdf",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "0b5522db-6f0e-4e6e-900f-7bd67e1f53dd",
+              "leftValue": "={{$binary.attachment_0.mimeType}}",
+              "rightValue": "image",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        400,
+        0
+      ],
+      "id": "d3c780bc-88c0-4d10-b196-288bcb3b6cb7",
+      "name": "Es Pdf?"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Recibir mail test": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Limpia el JSON",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limpia el JSON": {
+      "main": [
+        [
+          {
+            "node": "Registra la informacion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Registra la informacion": {
+      "main": [
+        [
+          {
+            "node": "Summarize",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summarize": {
+      "main": [
+        [
+          {
+            "node": "Respuesta:Facturas informadas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respuesta:Facturas informadas": {
+      "main": [
+        [
+          {
+            "node": "Guardar cambios",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Es Pdf?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Es Pdf?": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "752b9239-9ca1-41fb-8004-6e695c63d276",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "cb5bc0ccf2f9721fa02a4af62b871b0505f7b2e53e87e6ba55be90783a495087"
+  },
+  "id": "oGYFxP96bGuazyrQho1k1",
+  "tags": []
+}
