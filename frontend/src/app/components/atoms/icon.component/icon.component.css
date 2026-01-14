@@ -2,3 +2,8 @@ svg {
   display: inline-block;
   vertical-align: middle;
 }
+
+svg use {
+  fill: inherit;
+  color: inherit;
+}

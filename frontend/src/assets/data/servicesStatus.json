@@ -1,0 +1,26 @@
+[
+    {
+      "id": "water",
+      "name": "Agua",
+      "lastRevision": "Hoy",
+      "status": "OK"
+    },
+    {
+      "id": "electricity",
+      "name": "Electricidad",
+      "lastRevision": "Hoy",
+      "status": "OK"
+    },
+    {
+      "id": "internet",
+      "name": "Internet",
+      "lastRevision": "Ayer",
+      "status": "OK"
+    },
+    {
+      "id": "elevator",
+      "name": "Ascensores",
+      "lastRevision": "Hace 2 días",
+      "status": "WARNING"
+    }
+]

@@ -24,6 +24,11 @@
   gap: 8px;
 }
 
+.footer-logo {
+  height: 36px;
+  width: auto;
+}
+
 .footer-info {
   display: flex;
   align-items: center;

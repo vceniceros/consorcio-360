@@ -1,21 +1,32 @@
 <nav 
-  class="sidebar w-64 bg-white border-r border-gray-200 transition-transform duration-300 flex-shrink-0 md:translate-x-0 md:static"
-  [class.-translate-x-full]="!isVisible"
-  [class.translate-x-0]="isVisible"> 
+  class="sidebar transition-transform duration-300 flex-shrink-0"
+  [class.hidden-mobile]="!isVisible"
+  [class.visible-desktop]="true"> 
   
   <app-navbar-item 
-    iconHref="assets/img/sprite.svg#dashboard" 
+    iconHref="assets/img/sprites.svg#dashboard" 
     label="Dashboard" 
     size="24" 
     iconColor="#000000" 
-    [isActive]="true">
+    [routerLink]="dashboardRoute"
+    [isActive]="false">
   </app-navbar-item>
   
   <app-navbar-item 
-    iconHref="assets/img/sprite.svg#profile" 
+    iconHref="assets/img/sprites.svg#profile" 
     label="Propietarios" 
     size="24" 
     iconColor="#000000" 
+    [routerLink]="ownersRoute"
+    [isActive]="false">
+  </app-navbar-item>
+  
+  <app-navbar-item 
+    iconHref="assets/img/sprites.svg#expenses" 
+    label="Gastos" 
+    size="24" 
+    iconColor="#000000" 
+    [routerLink]="expensesRoute"
     [isActive]="false">
   </app-navbar-item>
 </nav>

@@ -25,5 +25,24 @@
     "units": 32,
     "owners": 30,
     "imageUrl": "assets/img/residencial-belgrano.jpg"
+  }, 
+  {
+    "id": 4,
+    "name": "complejo los alamaos",
+    "status": "PENDING",
+    "address": "avenida 10 de agosto 1234, Pilar",
+    "units": 80,
+    "owners": 60,
+    "imageUrl": "assets/img/complejo-los-alamos.jpg"
+  },
+  {
+    "id": 5,
+    "name": "complejo las piedras",
+    "status": "INACTIVE",
+    "address": "avenida 10 de agosto 1234, Pilar",
+    "units": 80,
+    "owners": 60,
+    "imageUrl": "assets/img/complejo-los-alamos.jpg"
   }
+
 ]

@@ -17,10 +17,10 @@ import { FooterComponent } from './components/organism/footer.component/footer.c
     <div class="flex flex-col h-screen">
       <app-navbar [showMenuButton]="showSidebar" (toggleMenu)="toggleSidebar()"></app-navbar>
 
-      <div class="flex flex-1 overflow-hidden relative">
-        <app-sidebar *ngIf="showSidebar" [isVisible]="isSidebarOpen"></app-sidebar>
+      <div class="flex flex-1 overflow-hidden relative content-container">
+        <app-sidebar *ngIf="showSidebar" [isVisible]="isSidebarOpen || isDesktop()"></app-sidebar>
 
-        <main [class]="showSidebar ? 'flex-1 overflow-auto p-4 bg-gray-50' : 'flex-1 overflow-auto bg-gray-50 main-no-sidebar'">
+        <main [class]="showSidebar ? 'main-with-sidebar' : 'main-no-sidebar'">
            <router-outlet></router-outlet>
         </main>
       </div>
@@ -73,13 +73,21 @@ export class App implements OnInit {
     }
   }
 
+  isDesktop(): boolean {
+    if (typeof window !== 'undefined') {
+      return window.innerWidth >= 768;
+    }
+    return false;
+  }
+
   checkScreenSize() {
     // Verificar que estamos en el navegador (no en el servidor)
     if (typeof window !== 'undefined') {
-      // En desktop (768px o más), siempre visible
-      if (window.innerWidth >= 768 && this.showSidebar) {
+      // En desktop (768px o más), siempre visible y forzado
+      if (this.isDesktop() && this.showSidebar) {
         this.isSidebarOpen = true;
       }
+      // En mobile, mantener el estado actual (solo cambiar si el usuario interactúa)
     }
   }
 

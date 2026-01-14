@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { IconComponent } from '../../atoms/icon.component/icon.component';
 import { LabelComponent } from '../../atoms/label.component/label.component';
 import { CommonModule } from '@angular/common';
@@ -7,7 +8,7 @@ import { CommonModule } from '@angular/common';
   templateUrl: './navbar-item.component.html',
   styleUrls: ['./navbar-item.component.css'],
   standalone: true,
-  imports: [IconComponent, LabelComponent, CommonModule]
+  imports: [IconComponent, LabelComponent, CommonModule, RouterModule]
 })
 export class NavbarItemComponent {
   @Input() iconHref!: string; // Referencia al ícono en el sprite
@@ -15,4 +16,5 @@ export class NavbarItemComponent {
   @Input() isActive: boolean = false; // Estado activo/inactivo
   @Input() size: string = '24'; // Tamaño del ícono
   @Input() iconColor: string = '#000000'; // Color del ícono
+  @Input() routerLink?: string; // Ruta de navegación
 }

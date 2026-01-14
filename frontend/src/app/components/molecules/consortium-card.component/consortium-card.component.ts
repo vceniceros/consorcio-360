@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router, RouterModule } from '@angular/router';
 import { Consortium } from '../../../../models/consortium.model';
 import { CardImageComponent } from '../../atoms/card-image.component/card-image.component';
 import { LabelComponent } from '../../atoms/label.component/label.component';
@@ -11,6 +12,7 @@ import { IconComponent } from '../../atoms/icon.component/icon.component';
   selector: 'app-consortium-card',
   imports: [
     CommonModule,
+    RouterModule,
     CardImageComponent,
     LabelComponent,
     StatusLabelComponent,
@@ -23,4 +25,13 @@ import { IconComponent } from '../../atoms/icon.component/icon.component';
 })
 export class ConsortiumCardComponent {
   @Input() consortium!: Consortium;
+
+  constructor(private router: Router) {}
+
+  onCardClick() {
+    if (this.consortium.status === 'ACTIVE') {
+      const nameForUrl = this.consortium.name.toLowerCase().replace(/\s+/g, '-');
+      this.router.navigate(['/dashboard', nameForUrl]);
+    }
+  }
 }

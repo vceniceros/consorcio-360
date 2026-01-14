@@ -1,0 +1,56 @@
+[
+    {
+      "id": 101,
+      "date": "2025-12-31",
+      "category": "Mantenimiento",
+      "description": "Reparación ascensor principal",
+      "provider": "Ascensores SA",
+      "amount": 15000,
+      "status": "PAID"
+    },
+    {
+      "id": 102,
+      "date": "2025-12-27",
+      "category": "Servicios",
+      "description": "Luz común - Diciembre",
+      "provider": "Edenor",
+      "amount": 8500,
+      "status": "PAID"
+    },
+    {
+      "id": 103,
+      "date": "2025-12-26",
+      "category": "Limpieza",
+      "description": "Servicio de limpieza - Diciembre",
+      "provider": "Limpieza Total",
+      "amount": 12000,
+      "status": "PAID"
+    },
+    {
+      "id": 104,
+      "date": "2025-12-24",
+      "category": "Servicios",
+      "description": "Gas común - Diciembre",
+      "provider": "Metrogas",
+      "amount": 6200,
+      "status": "PAID"
+    },
+    {
+      "id": 105,
+      "date": "2025-12-19",
+      "category": "Administración",
+      "description": "Honorarios administrador - Diciembre",
+      "provider": "Admin Consorcio",
+      "amount": 18000,
+      "status": "PENDING"
+    },
+    {
+      "id": 106,
+      "date": "2025-12-14",
+      "category": "Mantenimiento",
+      "description": "Arreglo bomba de agua",
+      "provider": "Plomería Pro",
+      "amount": 9500,
+      "status": "PAID"
+    }
+  ]
